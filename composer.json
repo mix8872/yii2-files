@@ -1,0 +1,27 @@
+{
+  "name": "mix8872/yii2-files",
+  "version": "1.0.0",
+  "description": "Module for files attachment",
+  "type": "yii2-extension",
+  "license": "Open Source",
+  "authors": [
+    {
+      "name": "mix8872",
+      "email": "mix8872@yandex.ru"
+    }
+  ],
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.1.0",
+    "ext-mbstring": "*",
+    "ext-intl": "*",
+	"intervention/image": "*",
+	"himiklab/yii2-sortable-grid-view-widget" : "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "mix8872\\yiiFiles\\": "src"
+    }
+  }
+}
