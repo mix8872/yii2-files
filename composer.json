@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Module for files attachment",
   "type": "yii2-extension",
-  "license": "Open Source",
+  "license": "MIT",
   "authors": [
     {
       "name": "mix8872",
