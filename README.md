@@ -39,19 +39,19 @@ Common:
 
 ```php
 'modules' => [
-	'yiiFiles' => [
-		'class' => 'mix8872\yiiFiles\Module',
-		'as access' => [
-			'class' => 'yii\filters\AccessControl',
-			'rules' => [
-				[
-					'controllers' => ['yiiFiles/default'],
-					'allow' => true,
-					'roles' => ['admin']
-				],
-			]
-		],
-		'parameters' => [ // general module parameters
+    'yiiFiles' => [
+        'class' => 'mix8872\yiiFiles\Module',
+        'as access' => [
+            'class' => 'yii\filters\AccessControl',
+            'rules' => [
+                [
+                    'controllers' => ['yiiFiles/default'],
+                    'allow' => true,
+                    'roles' => ['admin']
+                ],
+            ]
+        ],
+        'parameters' => [ // general module parameters
             'sizes' => [ // if imgProcessDriver is GD supports only jpeg, png and gif
                 'galleryMiddle' => ['width' => '880', 'height' => '587', 'model' => ['common\modules\imageslider\models\ImageSlider']],
                 'galleryPreview' => ['width' => '120', 'height' => '60', 'model' => ['common\modules\imageslider\models\ImageSlider']]
@@ -72,7 +72,7 @@ Common:
                 'filetypes' => ['image/*'],
             ]
         ]
-	],
+    ],
 	// ... other modules definition
 ],
 ```
@@ -101,9 +101,9 @@ Frontend:
 
 In config you may define access control to prevent access to the administrative part of the module.
 
-Also you can define `imageResize` to create additional sizes for uploaded images.
+Also you can define `sizes` to create additional sizes for uploaded images.
 
-In `imageResize` definitions, also you can optional define model for which scaling will be applied. Support definition several models as array.
+In `resize` definitions, also you can optional define model for which scaling will be applied. Support definition several models as array.
 
 To use sizes names template you may define `sizesNameTemplate` option, where `%k` - key, `%s` - size. By default - `%s`;
 
@@ -130,7 +130,7 @@ Also you can configure attachment parameters directly in behavior:
 public function behaviors()
     {
         return [
-            'FileAttachBehavior' => [
+            'files' => [
                 'class' => \mix8872\yiiFiles\behaviors\FileAttachBehavior::class,
                 'attributes' => [
                     'images' => [
