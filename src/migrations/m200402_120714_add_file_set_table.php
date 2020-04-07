@@ -6,19 +6,18 @@ class m200402_120714_add_file_set_table extends Migration
 {
     public function safeUp()
     {
-        $this->createTable('{{%file_content}}', [
+        $this->createTable('{{%file_set}}', [
             'id' => $this->primaryKey(),
             'file_id' => $this->integer(11),
-            'lang' => $this->string()->defaultValue(''),
-            'name' => $this->string()->defaultValue(''),
-            'title' => $this->string()->defaultValue(''),
-            'description' => $this->string(),
+            'order' => $this->integer(3),
+            'filename' => $this->string(255),
+            'data' => $this->string(255)
         ]);
 
-        $this->createIndex('idx-file_id', 'file_content', 'file_id');
+        $this->createIndex('idx-file_set_id', 'file_set', 'file_id');
         $this->addForeignKey(
-            'fk-file-file_id',
-            'file_content',
+            'fk-file_set-file_id',
+            'file_set',
             'file_id',
             'file',
             'id',
@@ -29,9 +28,9 @@ class m200402_120714_add_file_set_table extends Migration
 
     public function safeDown()
     {
-        $this->dropForeignKey('fk-file-file_id', 'file_content');
-        $this->dropIndex('idx-file_id', 'file_content');
-        $this->dropTable('{{%file_content}}');
+        $this->dropForeignKey('fk-file_set-file_id', 'file_set');
+        $this->dropIndex('idx-file_set_id', 'file_set');
+        $this->dropTable('{{%file_set}}');
     }
 
     /*

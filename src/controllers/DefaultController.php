@@ -4,11 +4,17 @@ namespace mix8872\yiiFiles\controllers;
 
 use mix8872\yiiFiles\models\FileContent;
 use himiklab\sortablegrid\SortableGridAction;
+use mix8872\yiiFiles\models\FileSet;
+use mix8872\yiiFiles\widgets\FilesWidget;
 use Yii;
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use mix8872\yiiFiles\models\File;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * MenuController implements the CRUD actions for Menu model.
@@ -22,7 +28,7 @@ class DefaultController extends \yii\web\Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'ajax-update' => ['POST'],
                     'delete' => ['POST'],
@@ -36,17 +42,22 @@ class DefaultController extends \yii\web\Controller
      */
     public function getViewPath()
     {
-        return Yii::getAlias('@vendor/mix8872/yii2-files/src/views');
+        return Yii::getAlias('@vendor/mix8872/yii2-files/src/widgets/views');
     }
 
     /**
      * @return array
      */
-    public function actions(){
+    public function actions()
+    {
         return [
             'sort' => [
-                'class' => SortableGridAction::className(),
+                'class' => SortableGridAction::class,
                 'modelName' => 'mix8872\yiiFiles\models\File',
+            ],
+            'sort-sets' => [
+                'class' => SortableGridAction::class,
+                'modelName' => 'mix8872\yiiFiles\models\FileSet',
             ],
         ];
     }
@@ -66,18 +77,27 @@ class DefaultController extends \yii\web\Controller
         ]);
     }
 
-    /**
-     * Creates a new Menu model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
+    public function actionUpdate($id)
     {
-        $model = new File();
+        $inputFileTypes = ''; //file type for input
+        $jsAllowedFileTypes = []; //allowed file types for js
+        $jsAllowedFileExtensions = []; //allowed file extensions for js
 
-		return $this->render('create', [
-			'model' => $model,
-		]);
+        $model = $this->findModel($id);
+        $setModel = new FileSet();
+        if ($langModule = Yii::$app->getModule('languages')) {
+            $languages = $langModule->languages;
+        } else {
+            $languages = [Yii::$app->language => Yii::$app->language];
+        }
+
+        $setsDataProvider = new ArrayDataProvider([
+            'allModels' => $model->sets
+        ]);
+
+        $this->_setFiletypes($model->mime_type, $inputFileTypes, $jsAllowedFileTypes, $jsAllowedFileExtensions);
+
+        return $this->renderAjax('update', compact('model', 'setModel', 'languages', 'setsDataProvider', 'inputFileTypes', 'jsAllowedFileTypes', 'jsAllowedFileExtensions'));
     }
 
     /**
@@ -88,12 +108,20 @@ class DefaultController extends \yii\web\Controller
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (Yii::$app->request->isAjax) {
-            $content = FileContent::find()->where(['file_id' => $id])->indexBy('id')->all();
-            if (\yii\base\Model::loadMultiple($content, Yii::$app->request->post())) {
+            $content = FileContent::find()->where(['file_id' => (int)$id])->indexBy('id')->all();
+            $sets = FileSet::find()->where(['file_id' => (int)$id])->indexBy('id')->all();
+            $post = Yii::$app->request->post();
+            if (Model::loadMultiple($content, $post) && Model::loadMultiple($sets, $post)) {
                 $result = true;
                 foreach ($content as $item) {
                     if (!$item->save()) {
-                        error_log(print_r($item->getErrorSummary(1),1));
+                        error_log(print_r($item->getErrorSummary(1), 1));
+                        $result = false;
+                    }
+                }
+                foreach ($sets as $item) {
+                    if (!$item->save()) {
+                        error_log(print_r($item->getErrorSummary(1), 1));
                         $result = false;
                     }
                 }
@@ -105,34 +133,79 @@ class DefaultController extends \yii\web\Controller
         return false;
     }
 
+    public function actionSetsUpload($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if ($attachments = UploadedFile::getInstances(new FileSet(), 'attachment')) {
+
+            foreach ($attachments as $file) {
+                $set = new FileSet([
+                    'file_id' => (int)$id,
+                    'attachment' => $file
+                ]);
+                $set->save();
+            }
+        }
+        return new class() {
+        };
+    }
+
     /**
-     * Deletes an existing Menu model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Deletes an existing File model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
         return $this->findModel($id)->delete();
     }
 
-
+    /**
+     * @param $id
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionDeleteSets($id)
+    {
+        if ($set = FileSet::findOne((int)$id)) {
+            return $set->delete();
+        }
+        return false;
+    }
 
 //------------------------------------------------------------------
 
-	/**
-     * Finds the Menu model based on its primary key value.
+    /**
+     * Finds the File model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Menu the loaded model
+     * @return File|null the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = File::findOne($id)) !== null) {
+        if (($model = File::find()->where(['id' => (int)$id])->with('content')->with('sets')->one()) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Файл в базе не найден');
         }
+    }
+
+    /**
+     * @param $types
+     * @param $fileTypes
+     * @param $allowedFileTypes
+     * @param $allowedFileExtensions
+     */
+    protected function _setFiletypes($types, &$fileTypes, &$allowedFileTypes, &$allowedFileExtensions)
+    {
+        $type = explode('/', $types);
+        $allowedFileTypes = FilesWidget::getFType($type[0]);
+        isset($type[1]) && $type[1] === '*' ?: $allowedFileExtensions[] = FilesWidget::getExtensionByMime($types);
+        $fileTypes = $types;
     }
 }

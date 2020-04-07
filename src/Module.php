@@ -2,6 +2,8 @@
 
 namespace mix8872\yiiFiles;
 
+use mix8872\yiiFiles\helpers\Translit;
+use yii\base\Security;
 use yii\filters\AccessControl;
 use yii\base\InvalidConfigException;
 
@@ -22,6 +24,9 @@ class Module extends \yii\base\Module
     public const IMG_PROCESS_DRIVER_DEFAULT = self::DRIVER_GD;
     public const SIZES_NAME_BY = 'size';
     public const SIZES_NAME_TEMPLATE = '%s';
+
+    public const NAME_BY_TRANSLIT = 'translit';
+    public const NAME_BY_RAND = 'rand';
 
     /**
      * {@inheritdoc}
@@ -84,6 +89,27 @@ class Module extends \yii\base\Module
             && preg_match('/(%k|%s)/u', $this->parameters['sizesNameTemplate']) === false
         ) {
             return new InvalidConfigException('Parameter "sizesNameBy" set to "template", but template does not meet the requirements! Template must contain at least one of the characters "%k" or/and "%s".');
+        }
+    }
+
+    public function getFileNameBy($modelClass)
+    {
+        $fileNameBy = $this->parameters['filesNameBy'];
+        if ($fileNameBy === self::NAME_BY_TRANSLIT
+            || ((is_array($fileNameBy)
+                    && isset($fileNameBy[0])
+                    && $fileNameBy[0] === self::NAME_BY_TRANSLIT
+                )
+                && (!isset($fileNameBy['model'])
+                    || ((is_array($fileNameBy['model']) && in_array($modelClass, $fileNameBy['model'], true))
+                        || (is_string($fileNameBy['model']) && $modelClass === $fileNameBy['model'])
+                    )
+                )
+            )
+        ) {
+            return self::NAME_BY_TRANSLIT;
+        } else {
+            return self::NAME_BY_RAND;
         }
     }
 

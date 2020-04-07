@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use himiklab\sortablegrid\SortableGridView;
 use mix8872\yiiFiles\widgets\FilesWidget;
 
+\yii\widgets\PjaxAsset::register($this);
 ?>
 <?= !$field ? '<div class="form-group">' : '' ?>
 <?php if ($theme === FilesWidget::THEME_DRAGDROP) : ?>
@@ -54,13 +55,9 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                     <?php endif; ?>
                 <?php endif; ?>
                 <td>
-                    <?= Html::a('<span class="fa fa-pencil fas fa-pencil-alt"></span>', '#', [
-                        'title' => Yii::t('files', 'Редактировать атрибуты'),
-                        'data' => [
-                            'toggle' => 'modal',
-                            'target' => '#file-' . $file->id . '-edit-modal'
-                        ]
-                    ]) ?>
+                    <?= Html::a('<span class="fa fa-pencil fas fa-pencil-alt"></span>',
+                        ['/files/default/update', 'id' => $file->id],
+                        ['class' => 'js-yiiFile-edit',]) ?>
                     <?= Html::a('<i class="fa fa-times"></i>', ['/filesAttacher/default/delete', 'id' => $file->id], [
                         'title' => Yii::t('files', 'Удалить'),
                         'class' => 'delete-attachment-file',
@@ -68,7 +65,7 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                 </td>
             </tr>
         </table>
-        <?= $this->render('_edit-popup', ['model' => $file, 'languages' => $languages]) ?>
+        <?php // TODO: сделать окно редактирования полностью на AJAX ?>
     <?php endif; ?>
 <?php else : ?>
     <?= SortableGridView::widget([
@@ -78,7 +75,7 @@ use mix8872\yiiFiles\widgets\FilesWidget;
         },
         'showOnEmpty' => false,
         'emptyText' => '',
-        'sortableAction' => Url::to(['/filesAttacher/default/sort']),
+        'sortableAction' => Url::to(['/files/default/sort']),
         'rowOptions' => [
             'class' => 'file_row'
         ],
@@ -93,22 +90,21 @@ use mix8872\yiiFiles\widgets\FilesWidget;
             [
                 'attribute' => 'filename',
                 'format' => 'raw',
-                'value' => function ($model) use ($languages) {
-                    $popup = $this->render('_edit-popup', compact('model', 'languages'));
+                'value' => function ($model) {
                     if (preg_match("/^image\/.+$/i", $model->mime_type)) {
                         return Html::a(
                                 Html::img($model->url, ['width' => '50px']),
                                 $model->url,
                                 ['class' => 'lightbox']
-                            ) . $popup;
+                            );
                     } elseif (preg_match("/^video\/.+$/i", $model->mime_type)) {
                         return Html::tag(
                                 'video',
                                 Html::tag('source', '', ['src' => $model->url, 'type' => $model->mime_type]),
                                 ['width' => '50px', 'controls' => true]
-                            ) . $popup;
+                            );
                     } else {
-                        return Html::a(Yii::t('files', 'Preview'), [$model->url], ['tagret' => '_blank']) . $popup;
+                        return Html::a(Yii::t('files', 'Preview'), [$model->url], ['tagret' => '_blank']);
                     }
                 }
             ],
@@ -117,15 +113,12 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                 'template' => '{update} {delete}',
                 'buttons' => [
                     'update' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-pencil fas fa-pencil-alt"></span>', '#', [
-                            'data' => [
-                                'toggle' => 'modal',
-                                'target' => '#file-' . $model->id . '-edit-modal'
-                            ]
-                        ]);
+                        return Html::a('<span class="fa fa-pencil fas fa-pencil-alt"></span>',
+                            ['/files/default/update', 'id' => $model->id],
+                            ['class' => 'js-yiiFile-edit']);
                     },
                     'delete' => function ($url, $model) {
-                        return Html::a('<span class="fa fa-times"></span>', ['/filesAttacher/default/delete', 'id' => $model->id], [
+                        return Html::a('<span class="fa fa-times"></span>', ['/files/default/delete', 'id' => $model->id], [
                             'class' => 'delete-attachment-file',
                         ]);
                     }

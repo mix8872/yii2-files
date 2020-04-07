@@ -142,20 +142,19 @@ class FilesWidget extends InputWidget
         if (is_array($types)) {
             foreach ($types as $filetype) {
                 $type = explode('/', $filetype);
-                $allowedFileTypes = array_merge($allowedFileTypes, $this->_getType($type[0]));
-                isset($type[1]) && $type[1] === '*' ?: $allowedFileExtensions[] = $this->_getExtensionByMime($filetype);
+                $allowedFileTypes = array_merge($allowedFileTypes, self::getFType($type[0]));
+                isset($type[1]) && $type[1] === '*' ?: $allowedFileExtensions[] = $this->getExtensionByMime($filetype);
                 $fileTypes = implode(',', $types);
             }
         } else {
             $type = explode('/', $types);
-            $allowedFileTypes = $this->_getType($type[0]);
-            isset($type[1]) && $type[1] === '*' ?: $allowedFileExtensions[] = $this->_getExtensionByMime($types);
+            $allowedFileTypes = self::getFType($type[0]);
+            isset($type[1]) && $type[1] === '*' ?: $allowedFileExtensions[] = $this->getExtensionByMime($types);
             $fileTypes = $types;
         }
     }
 
-    private
-    function _getType($types)
+    public static function getFType($types)
     {
         switch ($types) {
             case 'application':
@@ -179,8 +178,7 @@ class FilesWidget extends InputWidget
         return $type;
     }
 
-    private
-    function _getExtensionByMime($mime)
+    public static function getExtensionByMime($mime)
     {
         $types = [
             "application/vnd.lotus-1-2-3" => "123",

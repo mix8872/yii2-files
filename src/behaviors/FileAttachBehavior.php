@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mix
- * Date: 29.10.2017
- * Time: 14:24
- */
-
 namespace mix8872\yiiFiles\behaviors;
 
 use Intervention\Image\ImageManager;
@@ -15,9 +8,6 @@ use mix8872\yiiFiles\Module;
 use Yii;
 use mix8872\yiiFiles\models\File;
 use yii\base\BaseObject;
-use yii\base\InvalidCallException;
-use yii\base\UnknownPropertyException;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\base\InvalidConfigException;
 use yii\web\UploadedFile;
@@ -137,10 +127,17 @@ class FileAttachBehavior extends \yii\base\Behavior
     public function __get($name)
     {
         if (isset($this->attributes[$name]) || in_array($name, $this->attributes, true)) {
-            return new FilesCollection($this->getFiles($name));
+            $multiple = $this->attributes[$name]['multiple'] ?? $this->module->attributes[$name]['multiple'] ?? false;
+            if ($multiple) {
+                return new FilesCollection($this->getFiles($name));
+            } else {
+                return $this->getFiles($name, true);
+            }
         }
         return parent::__get($name);
     }
+
+    //TODO: добавить метод __set()
 
     /**
      * @inheritdoc
@@ -283,7 +280,7 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     protected function _setPath($tag)
     {
-        $this->path = Yii::getAlias('@webroot' . $this->module->parameters['savePath'] . $this->modelClass . "/" . $this->modelId . "/" . $tag);
+        $this->path = Yii::getAlias('@webroot' . $this->module->parameters['savePath'] . $this->owner->formName() . '/' . $this->modelId . "/" . $tag);
         if (!is_dir($this->path) && !mkdir($concurrentDirectory = $this->path, 0755, true) && !is_dir($concurrentDirectory)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
@@ -350,7 +347,7 @@ class FileAttachBehavior extends \yii\base\Behavior
         $model->model_id = $this->modelId;
         $model->model_name = $this->modelClass;
         $model->name = $file->baseName;
-        $model->filename = $filename . "." . $file->extension;
+        $model->filename = "$filename.{$file->extension}";
         $model->mime_type = $file->type;
         $model->tag = $tag;
         $model->size = $file->size;
@@ -374,7 +371,7 @@ class FileAttachBehavior extends \yii\base\Behavior
             return $result;
         } else {
             $errors = $model->getErrors();
-            error_log("FILE SAVE IN DB ERROR: " . print_r($errors, 1));
+            error_log('FILE SAVE IN DB ERROR: ' . print_r($errors, 1));
         }
         return false;
     }
@@ -385,7 +382,7 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     protected function _addContentModel($model, $lang)
     {
-        $lang = strtolower(preg_replace('/(\w{2})-(\w{2})/ui', "\$1", $lang));
+        $lang = strtolower(preg_replace('/(\w{2})-(\w{2})/u', '$1', $lang));
         $fileContent = new FileContent();
         $fileContent->file_id = $model->id;
         $fileContent->lang = $lang;
@@ -414,7 +411,7 @@ class FileAttachBehavior extends \yii\base\Behavior
     protected function _saveSize($width, $height, $path)
     {
         if ($width || $height) {
-            return $this->manager->make($this->filePath)->resize($width, $height, function ($constraint) {
+            return $this->manager->make($this->filePath)->resize($width, $height, static function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             })->save($path);
@@ -430,22 +427,10 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     protected function _getFileName($name, $path, $extension)
     {
-        $fileNameBy = $this->module->parameters['filesNameBy'];
-        if ($fileNameBy === 'translit'
-            || ((is_array($fileNameBy)
-                    && isset($fileNameBy[0])
-                    && $fileNameBy[0] === 'translit'
-                )
-                && (!isset($fileNameBy['model'])
-                    || ((is_array($fileNameBy['model']) && in_array($this->modelClass, $fileNameBy['model']))
-                        || (is_string($fileNameBy['model']) && $this->modelClass == $fileNameBy['model'])
-                    )
-                )
-            )
-        ) {
+        if ($this->module->getFileNameBy($this->modelClass) === Module::NAME_BY_TRANSLIT) {
             $filename = $baseFileName = Translit::t($name);
             $i = 1;
-            while (is_file($path . '/' . $filename . "." . $extension)) {
+            while (is_file("$path/$filename.$extension")) {
                 $filename = $baseFileName . $i;
                 $i++;
             }
@@ -465,11 +450,7 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     public function deleteAllAttachments()
     {
-        $files = File::findAll(['model_id' => $this->owner->id]);
-        foreach ($files as $file) {
-            $file->modelClass = $this->modelClass;
-            $file->delete();
-        }
+        File::deleteAll(['model_id' => $this->owner->id, 'model_name' => $this->modelClass]);
     }
 
     /**
@@ -478,7 +459,7 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     public function getModelFiles()
     {
-        return $this->owner->hasMany(File::class, ['model_id' => 'id'])->andWhere(['model_name' => $this->modelClass])->with('content');
+        return $this->owner->hasMany(File::class, ['model_id' => 'id'])->andWhere(['model_name' => $this->modelClass])->with('content')->with('sets');
     }
 
     /**
@@ -519,13 +500,13 @@ class FileAttachBehavior extends \yii\base\Behavior
     {
         if (is_array($allowed)) {
             foreach ($allowed as $item) {
-                $item = preg_replace('%/\*$%ui', '/.*', $item);
+                $item = preg_replace('%/\*$%u', '/.*', $item);
                 if (preg_match('%' . $item . '%ui', $file->type)) {
                     return true;
                 }
             }
         } else {
-            if (preg_match('%' . preg_replace('%/\*$%ui', '/.*', $allowed) . '%ui', $file->type)) {
+            if (preg_match('%' . preg_replace('%/\*$%u', '/.*', $allowed) . '%ui', $file->type)) {
                 return true;
             }
         }

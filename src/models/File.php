@@ -17,13 +17,13 @@ use yii\db\ActiveRecord;
  * @property string $model_name
  * @property string $name
  * @property string $filename
- * @property string $extension
  * @property string $mime_type
  * @property string $tag
  * @property integer $size
  * @property integer $order
  * @property integer $user_id
  * @property integer $created_at
+ * @property mixed sets
  */
 class File extends ActiveRecord
 {
@@ -129,20 +129,25 @@ class File extends ActiveRecord
      */
     public function delete()
     {
-        $path = Yii::getAlias($this->webrootPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag);
-        if (file_exists($path . "/" . $this->filename)) {
-            unlink($path . "/" . $this->filename);
-            if ($this->_is_empty_dir($path)) {
-                rmdir($path);
-            }
+        $path = Yii::getAlias($this->webrootPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}");
+        if (file_exists("$path/{$this->filename}")) {
+            unlink("$path/{$this->filename}");
         }
 
-        $sizes = glob($path . '/' . preg_replace('/(\.[^\.]*$)/ui', "*\$1", $this->filename));
-
-        if ($sizes) {
+        if ($sizes = glob($path . '/' . preg_replace('/(\.[^\.]*$)/ui', "*\$1", $this->filename))) {
             foreach ($sizes as $size) {
                 unlink($size);
             }
+        }
+
+        if ($sets = $this->sets) {
+            foreach ($sets as $set) {
+                $set->delete();
+            }
+        }
+
+        if ($this->_is_empty_dir($path)) {
+            rmdir($path);
         }
 
         parent::delete();
@@ -155,12 +160,7 @@ class File extends ActiveRecord
      */
     protected function _is_empty_dir($dir)
     {
-        if (is_dir($dir)) {
-            if (($files = @scandir($dir)) && count($files) <= 2) {
-                return true;
-            }
-        }
-        return false;
+        return (is_dir($dir) && ($files = @scandir($dir)) && count($files) <= 2);
     }
 
     /**
@@ -204,8 +204,9 @@ class File extends ActiveRecord
      */
     public function afterFind()
     {
-        $this->url = Yii::getAlias($this->webPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag . "/" . $this->filename);
-        $this->trueUrl = Url::to([Yii::getAlias($this->webPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag . "/" . $this->filename)], true);
+        $this->url = Yii::getAlias($this->webPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/{$this->filename}");
+        $this->trueUrl = Url::to([$this->url], true);
+        $this->trueUrl = rtrim($this->trueUrl, '/');
 
         preg_match('/\/\w{2}\//ui', $this->trueUrl, $match);
         $match = trim(array_pop($match), '/');
@@ -231,22 +232,23 @@ class File extends ActiveRecord
     public function getSizes($withFullPath = false)
     {
         $result = array();
-        $path = Yii::getAlias($this->webPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag . "/");
-        $truePath = Url::to([Yii::getAlias($this->webPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag . "/")], true);
+        $basePath = self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/";
+        $path = Yii::getAlias($this->webPath . $basePath);
+        $truePath = Url::to([Yii::getAlias($path)], true);
         $exFilename = explode('.', $this->filename);
         $module = Yii::$app->getModule('files');
 
-        preg_match('/\/\w{2}\//ui', $truePath, $match);
+        preg_match('/\/\w{2}\//u', $truePath, $match);
         $match = trim(array_pop($match), '/');
 
         if ($langModule = Yii::$app->getModule('languages')) { // remove lang from truePath
             if (array_search($match, $langModule->languages) !== false) {
-                $truePath = preg_replace('/\/\w{1,2}\//ui', '/', $truePath);
+                $truePath = preg_replace('/\/\w{1,2}\//u', '/', $truePath);
             }
         }
 
         if ($withFullPath) {
-            $fullPath = Yii::getAlias($this->webrootPath . $this->model_name . "/" . $this->model_id . "/" . $this->tag . "/");
+            $fullPath = Yii::getAlias($this->webrootPath . $basePath);
         }
 
         $sizesNameBy = $module->parameters['sizesNameBy'];
@@ -319,11 +321,29 @@ class File extends ActiveRecord
     }
 
     /**
-     * @return array|null|ActiveRecord
+     * @return \yii\db\ActiveQuery
      */
     public function getContent()
     {
         $language = preg_replace('/-\w+$/', '', Yii::$app->language);
         return $this->hasOne(FileContent::class, ['file_id' => 'id'])->andWhere(['lang' => $language]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSets()
+    {
+        return $this->hasMany(FileSet::class, ['file_id' => 'id'])->indexBy('id')->orderBy('order ASC');
+    }
+
+    /**
+     * @param $modelClass
+     * @return mixed|string
+     */
+    public static function getModelName($modelClass)
+    {
+        $classExplode = explode('\\', $modelClass);
+        return array_pop($classExplode);
     }
 }

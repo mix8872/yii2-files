@@ -143,7 +143,7 @@ public function behaviors()
                     ]
                 ],
             ],
-			// ... other behaviors
+            // ... other behaviors
         ];
     }
 ```
@@ -158,7 +158,7 @@ public function behaviors()
                 'class' => \mix8872\yiiFiles\behaviors\FileAttachBehavior::class,
                 ...
             ],
-			// ... other behaviors
+            // ... other behaviors
         ];
     }
 ```
@@ -172,31 +172,41 @@ use mix8872\yiiFiles\widgets\FilesWidget;
 
 <!-- ... some view code -->
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+<!-- ['options' => ['enctype' => 'multipart/form-data']] - is IMPORTANT
+ if you use widget as stay alone widget instead input widget --> 
  
  ...
- 
-	<?= FilesWidget::widget([
-		'model' => $model,
-		'attribute' => 'videos', // one of the tags listed in the model
-        'theme' => FilesWidget::THEME_BROWSE, // or THEME_DRAGDROP or THEME_BROWSE_DRAGDROP
-        'width' => '100%', // width of dragDrop zone
-        'height' => '100px', // height of dragDrop zone
-        'options' => ['class' => 'some-custom-class']
-	]) ?>
 
+     <!-- Preferably widget declaration -->
+     <?= $form->field($model, 'images')->widget(FilesWidget::class, [ 
+         'theme' => FilesWidget::THEME_BROWSE, // optional, or THEME_DRAGDROP or THEME_BROWSE_DRAGDROP
+         'width' => '100%', // optional, width of dragDrop zone
+         'height' => '100px', // optional, height of dragDrop zone
+         'options' => ['class' => 'some-custom-class'] // optional, custom input options
+     ])->label('Custom label') ?>
+	
     <!-- OR -->
 
-    <?= $form->field($model, 'images')->widget(FilesWidget::class, [
-        'theme' => FilesWidget::THEME_BROWSE, // optional, or THEME_DRAGDROP or THEME_BROWSE_DRAGDROP
+    <?= FilesWidget::widget([
+        'model' => $model,
+        'attribute' => 'videos', // one of the tags listed in the model
+        'theme' => FilesWidget::THEME_BROWSE, // or THEME_DRAGDROP or THEME_BROWSE_DRAGDROP
         'width' => '100%', // optional, width of dragDrop zone
         'height' => '100px', // optional, height of dragDrop zone
         'options' => ['class' => 'some-custom-class'] // optional, custom input options
-    ])->label('Custom label') ?>
+    ]) ?>
 
+...
 
 <?php ActiveForm::end() ?>
 ```
+
+**!!! IMPORTANT !!!**  
+**You may define form with `['options' => ['enctype' => 'multipart/form-data']]`
+if you use stay alone widget instead input widget!**
+
+If uses input widget - `multipart/form-data` automatically added to you form.
 
 Also you can attach file to model by url as follows:
 ```php
@@ -205,13 +215,18 @@ $model->attachByUrl(string $tag, string $url);
 
 You can get the model files by calling the method:
 ```php
-$files = $model->getFiles('tag'); //array of file objects
+$files = $model->getFiles('property'); //array of file objects
+
+// public function getFiles(string $property, bool $single, bool $asQuery)
+```
+- $property - tag of you attachment
+- $single - if true - returns single attachment object, default false
+- $asQuery - if true - returns ActiveQuery object, default false
+
+or by accessing as property:
+
+```php
+$files = $model->property;
 ```
 
-```
-public function getFiles(string $tag, bool $single, bool $asQuery)
-```
-
-- $tag - tag of you attachment
-- $single - if true - returns single attachment object
-- $asQuery - if true - returns ActiveQuery object
+If uses getting files as property then you get array of files objects if property is multiple or single file object if not

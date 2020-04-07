@@ -1,5 +1,6 @@
 <?php
 
+use mix8872\yiiFiles\widgets\FilesWidget;
 use yii\helpers\Html;
 
 \mix8872\yiiFiles\assets\FileinputAsset::register($this);
@@ -17,28 +18,34 @@ $options = [
     <?= Html::activeInput('file', $model, $attribute, $options) ?>
 <?php endif; ?>
 <?php
-$this->registerJs("
-    (function($){
+$dropZone = $theme === FilesWidget::THEME_BROWSE_DRAGDROP ? 'browseOnZoneClick: true,' : 'dropZoneEnabled: false,';
+$uploadUrl = isset($uploadUrl) ? "uploadUrl: '$uploadUrl'," : '';
+$showUpload = isset($uploadUrl);
+$js = <<<JS
+(function($){
         $(function(){
-            $('input[data-id=" . $uniqueName . "]').fileinput({
-                showUpload: false,
+            $('input[data-id=$uniqueName]').fileinput({
+                showUpload: $showUpload,
+                layoutTemplates: {
+                    actions: '{delete}'
+                },
                 minFileCount: 0,
                 language: 'ru',
                 previewFileType:'any',
                 browseLabel: '',
                 removeLabel: '',
                 theme: 'fa',
-                " . ($theme === \mix8872\yiiFiles\widgets\FilesWidget::THEME_BROWSE_DRAGDROP ? '
-                browseOnZoneClick: true,
-                ' : '
-                dropZoneEnabled: false,
-                ') . "
+                $dropZone
                 mainClass: 'input-group',
-                allowedFileTypes: JSON.parse('" . $jsAllowedFileTypes . "'),
-                allowedFileExtensions: JSON.parse('" . $jsAllowedFileExtensions . "'),
-                browseClass: 'btn btn-secondary'
+                allowedFileTypes: JSON.parse('$jsAllowedFileTypes'),
+                allowedFileExtensions: JSON.parse('$jsAllowedFileExtensions'),
+                browseClass: 'btn btn-secondary',
+                $uploadUrl
+                uploadAsync: false,
+                autoOrientImage: false
             });
         });
     }(jQuery));
-");
-?>
+JS;
+
+$this->registerJs($js);
