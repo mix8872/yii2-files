@@ -1,5 +1,9 @@
 # Changelog
 
+##1.0.2
+
+Fix file extension check for attached images
+
 ##1.0.1
 
 Add webp, webm mime types to behavior

@@ -95,7 +95,8 @@ class DefaultController extends \yii\web\Controller
             'allModels' => $model->sets
         ]);
 
-        $this->_setFiletypes($model->mime_type, $inputFileTypes, $jsAllowedFileTypes, $jsAllowedFileExtensions);
+        $type = explode('/', $model->mime_type);
+        $this->_setFiletypes("$type[0]/*", $inputFileTypes, $jsAllowedFileTypes, $jsAllowedFileExtensions);
 
         return $this->renderAjax('update', compact('model', 'setModel', 'languages', 'setsDataProvider', 'inputFileTypes', 'jsAllowedFileTypes', 'jsAllowedFileExtensions'));
     }
