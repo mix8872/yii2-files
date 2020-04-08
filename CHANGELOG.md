@@ -1,5 +1,13 @@
 # Changelog
 
+##1.0.3
+
+Fix bug with files deletion
+Add popper.js
+Fix readme
+Fix bug with file sort
+Fix bug with file property saving
+
 ##1.0.2
 
 Fix file extension check for attached images

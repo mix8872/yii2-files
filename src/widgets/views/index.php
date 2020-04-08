@@ -58,7 +58,7 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                     <?= Html::a('<span class="fa fa-pencil fas fa-pencil-alt"></span>',
                         ['/files/default/update', 'id' => $file->id],
                         ['class' => 'js-yiiFile-edit',]) ?>
-                    <?= Html::a('<i class="fa fa-times"></i>', ['/filesAttacher/default/delete', 'id' => $file->id], [
+                    <?= Html::a('<i class="fa fa-times"></i>', ['/files/default/delete', 'id' => $file->id], [
                         'title' => Yii::t('files', 'Удалить'),
                         'class' => 'delete-attachment-file',
                     ]) ?>

@@ -39,7 +39,7 @@ Common:
 
 ```php
 'modules' => [
-    'yiiFiles' => [
+    'files' => [
         'class' => 'mix8872\yiiFiles\Module',
         'as access' => [
             'class' => 'yii\filters\AccessControl',
@@ -83,7 +83,7 @@ Frontend:
 'modules' => [
         ...
         
-        'yiiFiles' => [
+        'files' => [
             'as access' => [
                 'class' => \yii\filters\AccessControl::class,
                 'rules' => [

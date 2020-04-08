@@ -49,7 +49,6 @@ class FileAttachBehavior extends \yii\base\Behavior
         'tif' => 'image/tiff',
         'svg' => 'image/svg+xml',
         'svgz' => 'image/svg+xml',
-        'webp' => 'image/webp',
 
         // archives
         'zip' => 'application/zip',
@@ -64,7 +63,6 @@ class FileAttachBehavior extends \yii\base\Behavior
         'avi' => 'video/mp4',
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
-        'webm' => 'video/webm',
 
         // adobe
         'pdf' => 'application/pdf',
@@ -254,13 +252,11 @@ class FileAttachBehavior extends \yii\base\Behavior
             $file->extension = $data['extension'];
             $file->size = filesize($url);
         } else {
-            $types = $this->module['attributes']['types'] ?? [];
-            $types = array_merge(self::$types, $types);
             $data = @get_headers($url, true);
             $path = parse_url($url, PHP_URL_PATH);
             $file->baseName = $path ? basename($path) : (isset($data['ETag']) ? trim($data['ETag'], '"') : (new Security())->generateRandomString(12));
             $file->extension = substr(strstr($file->type, '/'), 1, strlen($file->type));
-            $file->type = $data['Content-Type'] ?? $types[$file->extension];
+            $file->type = $data['Content-Type'] ?? self::$types[$file->extension];
             $file->size = $data['Content-Length'] ?? 0;
         }
         $file->tempName = $url;
@@ -463,7 +459,11 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     public function getModelFiles()
     {
-        return $this->owner->hasMany(File::class, ['model_id' => 'id'])->andWhere(['model_name' => $this->modelClass])->with('content')->with('sets');
+        return $this->owner->hasMany(File::class, ['model_id' => 'id'])
+            ->andWhere(['model_name' => $this->modelClass])
+            ->with('content')
+            ->with('sets')
+            ->orderBy('order ASC');
     }
 
     /**

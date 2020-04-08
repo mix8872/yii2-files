@@ -112,7 +112,7 @@ class DefaultController extends \yii\web\Controller
             $content = FileContent::find()->where(['file_id' => (int)$id])->indexBy('id')->all();
             $sets = FileSet::find()->where(['file_id' => (int)$id])->indexBy('id')->all();
             $post = Yii::$app->request->post();
-            if (Model::loadMultiple($content, $post) && Model::loadMultiple($sets, $post)) {
+            if (Model::loadMultiple($content, $post) && (!isset($post['FileSet']) || (isset($post['FileSet']) && Model::loadMultiple($sets, $post)))) {
                 $result = true;
                 foreach ($content as $item) {
                     if (!$item->save()) {
