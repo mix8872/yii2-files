@@ -163,6 +163,7 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     public function saveAttachments($event)
     {
+        $this->setParams();
         foreach ($this->attributes as $key => $attribute) {
             if (is_array($attribute)) {
                 $tagAttributes = $attribute;

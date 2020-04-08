@@ -1,5 +1,9 @@
 # Changelog
 
+##1.0.4
+
+Fix bug with file attachment to new model
+
 ##1.0.3
 
 Fix bug with files deletion
