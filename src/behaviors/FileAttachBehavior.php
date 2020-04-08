@@ -451,7 +451,10 @@ class FileAttachBehavior extends \yii\base\Behavior
      */
     public function deleteAllAttachments()
     {
-        File::deleteAll(['model_id' => $this->owner->id, 'model_name' => $this->modelClass]);
+        $files = File::find()->where(['model_id' => $this->owner->id, 'model_name' => $this->modelClass])->all();
+        foreach ($files as $file) {
+            $file->delete();
+        }
     }
 
     /**

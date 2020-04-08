@@ -1,5 +1,9 @@
 # Changelog
 
+##1.0.5
+
+Fix bug with files and directories deletion on model delete
+
 ##1.0.4
 
 Fix bug with file attachment to new model

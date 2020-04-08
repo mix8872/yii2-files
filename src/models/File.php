@@ -129,7 +129,8 @@ class File extends ActiveRecord
      */
     public function delete()
     {
-        $path = Yii::getAlias($this->webrootPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}");
+        $modelPath = Yii::getAlias($this->webrootPath . self::getModelName($this->model_name) . "/{$this->model_id}");
+        $path = "$modelPath/{$this->tag}";
         if (file_exists("$path/{$this->filename}")) {
             unlink("$path/{$this->filename}");
         }
@@ -148,6 +149,10 @@ class File extends ActiveRecord
 
         if ($this->_is_empty_dir($path)) {
             rmdir($path);
+        }
+
+        if ($this->_is_empty_dir($modelPath)) {
+            rmdir($modelPath);
         }
 
         parent::delete();
