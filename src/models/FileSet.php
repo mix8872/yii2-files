@@ -149,6 +149,18 @@ class FileSet extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->file->owner->trigger($insert ? FileAttachBehavior::EVENT_FILE_ADD : FileAttachBehavior::EVENT_FILE_UPDATE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function afterFind()
     {
         $file = $this->file;

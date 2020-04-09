@@ -1,5 +1,9 @@
 # Changelog
 
+##1.1.0
+
+Add files events
+
 ##1.0.5
 
 Fix bug with files and directories deletion on model delete

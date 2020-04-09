@@ -2,6 +2,7 @@
 
 namespace mix8872\yiiFiles\models;
 
+use mix8872\yiiFiles\behaviors\FileAttachBehavior;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Url;
@@ -129,6 +130,8 @@ class File extends ActiveRecord
      */
     public function delete()
     {
+        $this->owner->trigger(FileAttachBehavior::EVENT_FILE_DELETE);
+
         $modelPath = Yii::getAlias($this->webrootPath . self::getModelName($this->model_name) . "/{$this->model_id}");
         $path = "$modelPath/{$this->tag}";
         if (file_exists("$path/{$this->filename}")) {
@@ -228,6 +231,15 @@ class File extends ActiveRecord
         }
 
         parent::afterFind();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->owner->trigger($insert ? FileAttachBehavior::EVENT_FILE_ADD : FileAttachBehavior::EVENT_FILE_UPDATE);
     }
 
     /**
@@ -340,6 +352,14 @@ class File extends ActiveRecord
     public function getSets()
     {
         return $this->hasMany(FileSet::class, ['file_id' => 'id'])->indexBy('id')->orderBy('order ASC');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOwner()
+    {
+        return $this->hasOne($this->model_name, ['id' => 'model_id']);
     }
 
     /**

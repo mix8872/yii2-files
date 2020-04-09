@@ -1,4 +1,5 @@
 <?php
+
 namespace mix8872\yiiFiles\behaviors;
 
 use Intervention\Image\ImageManager;
@@ -16,6 +17,10 @@ use mix8872\yiiFiles\helpers\Translit;
 
 class FileAttachBehavior extends \yii\base\Behavior
 {
+    public const EVENT_FILE_ADD = 'file_add';
+    public const EVENT_FILE_UPDATE = 'file_update';
+    public const EVENT_FILE_DELETE = 'file_delete';
+
     public $attributes;
     protected $modelClass;
     protected $path;
@@ -151,6 +156,9 @@ class FileAttachBehavior extends \yii\base\Behavior
             ActiveRecord::EVENT_AFTER_FIND => 'setParams',
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'setParams',
             ActiveRecord::EVENT_BEFORE_DELETE => 'setParams',
+            self::EVENT_FILE_ADD => 'onFileAdd',
+            self::EVENT_FILE_UPDATE => 'onFileUpdate',
+            self::EVENT_FILE_DELETE => 'onFileDelete'
         ];
     }
 
@@ -536,6 +544,27 @@ class FileAttachBehavior extends \yii\base\Behavior
                 return false;
             default:
                 return true;
+        }
+    }
+
+    public function onFileAdd()
+    {
+        if (method_exists($this->owner, 'onFileAdd')) {
+            $this->owner->onFileAdd();
+        }
+    }
+
+    public function onFileUpdate()
+    {
+        if (method_exists($this->owner, 'onFileUpdate')) {
+            $this->owner->onFileUpdate();
+        }
+    }
+
+    public function onFileDelete()
+    {
+        if (method_exists($this->owner, 'onFileDelete')) {
+            $this->owner->onFileDelete();
         }
     }
 }

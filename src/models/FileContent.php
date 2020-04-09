@@ -2,6 +2,7 @@
 
 namespace mix8872\yiiFiles\models;
 
+use mix8872\yiiFiles\behaviors\FileAttachBehavior;
 use Yii;
 
 /**
@@ -59,5 +60,14 @@ class FileContent extends \yii\db\ActiveRecord
     public function getFile()
     {
         return $this->hasOne(File::class, ['id' => 'file_id']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->file->owner->trigger($insert ? FileAttachBehavior::EVENT_FILE_ADD : FileAttachBehavior::EVENT_FILE_UPDATE);
     }
 }

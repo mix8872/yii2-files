@@ -45,7 +45,7 @@ Common:
             'class' => 'yii\filters\AccessControl',
             'rules' => [
                 [
-                    'controllers' => ['yiiFiles/default'],
+                    'controllers' => ['files/default'],
                     'allow' => true,
                     'roles' => ['admin']
                 ],
@@ -229,4 +229,40 @@ or by accessing as property:
 $files = $model->property;
 ```
 
-If uses getting files as property then you get array of files objects if property is multiple or single file object if not
+If uses getting files as property then you get array of files objects if property is multiple or single file object if not.
+
+Events
+----------
+
+On adding, updating and deletion files will generates next events:
+
+* EVENT_FILE_ADD
+* EVENT_FILE_UPDATE
+* EVENT_FILE_DELETE
+
+
+For catching events you can declare this functions in you model:
+
+**triggered on adding a file**
+```
+public function onFileAdd()
+    {
+        error_log('File add');
+    }
+```
+
+**triggered on updating a file**
+```
+    public function onFileUpdate()
+    {
+        error_log('File update');
+    }
+```
+
+**triggered on file deletion**
+```
+    public function onFileDelete()
+    {
+        error_log('File delete');
+    }
+```
