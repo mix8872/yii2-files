@@ -272,7 +272,7 @@ class File extends ActiveRecord
         if (isset($module->parameters['sizes']) && !empty($module->parameters['sizes'])) {
             foreach ($module->parameters['sizes'] as $key => $size) {
                 if ((!isset($size['model']) || empty($size['model']))
-                    || self::checkSizeModel($size, $this->model_class)
+                    || self::checkSizeModel($size, $this->model_name)
                 ) {
                     $width = isset($size['width']) ? $size['width'] : null;
                     $height = isset($size['height']) ? $size['height'] : null;
