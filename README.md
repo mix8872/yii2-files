@@ -163,6 +163,24 @@ public function behaviors()
     }
 ```
 
+If you need do a batch update models with their files then you may define `indexBy` behavior property  
+and specify the name of the parent model property that will be used for indexing. By default is `id`.
+
+```php
+public function behaviors()
+    {
+        return [
+            'files' => [
+                'class' => \mix8872\yiiFiles\behaviors\FileAttachBehavior::class,
+                'attributes' => [ ... ],
+                'indexBy' => 'code', // by default - id
+                ...
+            ],
+            // ... other behaviors
+        ];
+    }
+```
+
 Next you may add widget model and echo widget with its config:
 
 ```php

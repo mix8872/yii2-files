@@ -22,6 +22,7 @@ class FileAttachBehavior extends \yii\base\Behavior
     public const EVENT_FILE_DELETE = 'file_delete';
 
     public $attributes;
+    public $indexBy = 'id';
     protected $modelClass;
     protected $path;
     protected $filePath;
@@ -111,6 +112,9 @@ class FileAttachBehavior extends \yii\base\Behavior
         if (!($this->module = Yii::$app->getModule('files'))) {
             throw new InvalidConfigException('Module "files" is not defined');
         }
+        if (!$this->attributes) {
+            throw new InvalidConfigException('Attributes must be defined');
+        }
         $this->driver = $this->module->parameters['imgProcessDriver'];
         $this->manager = new ImageManager(['driver' => $this->driver]);
     }
@@ -181,6 +185,10 @@ class FileAttachBehavior extends \yii\base\Behavior
             }
 
             $attachments = UploadedFile::getInstances($this->owner, $attribute);
+            if (!$attachments) {
+                $index = $this->owner->{$this->indexBy};
+                $attachments = UploadedFile::getInstances($this->owner, "[$index]$attribute");
+            }
             if ($attachments) {
                 if (!isset($tagAttributes['multiple']) || !$tagAttributes['multiple']) {
                     if ($olds = $this->getFiles($attribute)) {
