@@ -112,9 +112,6 @@ class FileAttachBehavior extends \yii\base\Behavior
         if (!($this->module = Yii::$app->getModule('files'))) {
             throw new InvalidConfigException('Module "files" is not defined');
         }
-        if (!$this->attributes) {
-            throw new InvalidConfigException('Attributes must be defined');
-        }
         $this->driver = $this->module->parameters['imgProcessDriver'];
         $this->manager = new ImageManager(['driver' => $this->driver]);
     }
