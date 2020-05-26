@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.2
+
+Fix bug in FileSet model
+
 ##1.2.1
 
 Fix bug

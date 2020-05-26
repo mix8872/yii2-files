@@ -3,6 +3,7 @@
 namespace mix8872\yiiFiles\models;
 
 use himiklab\sortablegrid\SortableGridBehavior;
+use mix8872\yiiFiles\behaviors\FileAttachBehavior;
 use mix8872\yiiFiles\helpers\Translit;
 use mix8872\yiiFiles\Module;
 use Yii;
