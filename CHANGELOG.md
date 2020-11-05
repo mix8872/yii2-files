@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.3
+
+Fixed deletion bug
+
 ##1.2.2
 
 Fix bug in FileSet model
