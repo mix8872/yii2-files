@@ -151,12 +151,12 @@ class FileAttachBehavior extends \yii\base\Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_INSERT => 'saveAttachments',
-            ActiveRecord::EVENT_AFTER_UPDATE => 'saveAttachments',
-            ActiveRecord::EVENT_AFTER_DELETE => 'deleteAllAttachments',
-            ActiveRecord::EVENT_AFTER_FIND => 'setParams',
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'setParams',
             ActiveRecord::EVENT_BEFORE_DELETE => 'setParams',
+            ActiveRecord::EVENT_BEFORE_DELETE => 'deleteAllAttachments',
+            ActiveRecord::EVENT_AFTER_INSERT => 'saveAttachments',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'saveAttachments',
+            ActiveRecord::EVENT_AFTER_FIND => 'setParams',
             self::EVENT_FILE_ADD => 'onFileAdd',
             self::EVENT_FILE_UPDATE => 'onFileUpdate',
             self::EVENT_FILE_DELETE => 'onFileDelete'
