@@ -16,11 +16,11 @@ class FileinputAsset extends \yii\web\AssetBundle
         'bs-fileinput/css/fileinput.min.css',
     ];
     public $js = [
-        'bs-fileinput/js/plugins/sortable.min.js',
-        'bs-fileinput/js/fileinput.min.js',
-        'bs-fileinput/js/locales/ru.js',
-        'bs-fileinput/themes/explorer-fa/theme.js',
-        'bs-fileinput/themes/fa/theme.js',
+        'js/plugins/sortable.min.js',
+        'js/fileinput.min.js',
+        'js/locales/ru.js',
+        'themes/explorer-fa/theme.js',
+        'themes/fa/theme.js',
 //        'bs-fileinput/js/plugins/popper.min.js',
     ];
 

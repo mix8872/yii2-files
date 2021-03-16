@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.6
+
+Fix file input asset
+
 ##1.2.5
 
 Bugfix: update composer.json
