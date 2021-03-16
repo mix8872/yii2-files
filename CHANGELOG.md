@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.5
+
+Bugfix: update composer.json
+
 ##1.2.4
 
 Bugfix

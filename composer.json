@@ -1,6 +1,6 @@
 {
   "name": "mix8872/yii2-files",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Module for files attachment",
   "type": "yii2-extension",
   "license": "MIT",
@@ -16,10 +16,9 @@
     "php": ">=7.1.0",
     "ext-mbstring": "*",
     "ext-intl": "*",
+	"npm-asset/bootstrap-fileinput": "dev-master",
 	"intervention/image": "*",
-	"fxp/composer-asset-plugin": "~1.3",
-	"himiklab/yii2-sortable-grid-view-widget" : "*",
-	"npm-asset/bootstrap-fileinput": "dev-master"
+	"himiklab/yii2-sortable-grid-view-widget" : "*"
   },
   "autoload": {
     "psr-4": {
