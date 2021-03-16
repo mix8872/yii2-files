@@ -1,6 +1,4 @@
 <?php
-namespace mix8872\yiiFiles\migrations;
-
 use yii\db\Migration;
 
 class m200402_120714_add_file_set_table extends Migration

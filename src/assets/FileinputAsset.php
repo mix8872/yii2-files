@@ -11,7 +11,7 @@ namespace mix8872\yiiFiles\assets;
 
 class FileinputAsset extends \yii\web\AssetBundle
 {
-    public $sourcePath = '@vendor/mix8872/yii2-files/src/assets';
+    public $sourcePath = '@vendor/npm-asset/bootstrap-fileinput';
     public $css = [
         'bs-fileinput/css/fileinput.min.css',
     ];
@@ -21,7 +21,7 @@ class FileinputAsset extends \yii\web\AssetBundle
         'bs-fileinput/js/locales/ru.js',
         'bs-fileinput/themes/explorer-fa/theme.js',
         'bs-fileinput/themes/fa/theme.js',
-        'bs-fileinput/js/plugins/popper.min.js',
+//        'bs-fileinput/js/plugins/popper.min.js',
     ];
 
     public $depends = [

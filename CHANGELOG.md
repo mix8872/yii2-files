@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.4
+
+Bugfix
+
 ##1.2.3
 
 Fixed deletion bug

@@ -56,7 +56,7 @@ use yii\helpers\Url;
                 </div>
             </div>
             <div class="modal-footer">
-                <?= Html::button('Сохранить', ['class' => 'btn btn-primary file-edit-submit', 'data-url' => Url::to(['/filesAttacher/default/ajax-update', 'id' => $model->id])]) ?>
+                <?= Html::button('Сохранить', ['class' => 'btn btn-primary file-edit-submit', 'data-url' => Url::to(['/files/default/ajax-update', 'id' => $model->id])]) ?>
             </div>
 
         </div><!-- /.modal-content -->
