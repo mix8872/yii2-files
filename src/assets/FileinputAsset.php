@@ -13,7 +13,7 @@ class FileinputAsset extends \yii\web\AssetBundle
 {
     public $sourcePath = '@vendor/npm-asset/bootstrap-fileinput';
     public $css = [
-        'bs-fileinput/css/fileinput.min.css',
+        'css/fileinput.min.css',
     ];
     public $js = [
         'js/plugins/sortable.min.js',

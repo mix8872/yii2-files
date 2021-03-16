@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.7
+
+Fix assets
+
 ##1.2.6
 
 Fix file input asset

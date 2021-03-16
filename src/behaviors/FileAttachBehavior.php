@@ -295,8 +295,8 @@ class FileAttachBehavior extends \yii\base\Behavior
     protected function _setPath($tag)
     {
         $this->path = Yii::getAlias('@webroot' . $this->module->parameters['savePath'] . $this->owner->formName() . '/' . $this->modelId . "/" . $tag);
-        if (!is_dir($this->path) && !mkdir($concurrentDirectory = $this->path, 0755, true) && !is_dir($concurrentDirectory)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        if (!is_dir($this->path) && !mkdir($this->path, 0755, true) && !is_dir($this->path)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->path));
         }
     }
 
