@@ -1,5 +1,9 @@
 # Changelog
 
+##1.2.8
+
+Fix attachByUrl bug
+
 ##1.2.7
 
 Fix assets

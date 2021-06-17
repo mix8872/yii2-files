@@ -265,15 +265,25 @@ class FileAttachBehavior extends \yii\base\Behavior
             $file->type = mime_content_type($url);
             $file->extension = $data['extension'];
             $file->size = filesize($url);
+            $file->tempName = $url;
         } else {
-            $data = @get_headers($url, true);
+            $urlInfo = pathinfo($url);
             $path = parse_url($url, PHP_URL_PATH);
             $file->baseName = $path ? basename($path) : (isset($data['ETag']) ? trim($data['ETag'], '"') : (new Security())->generateRandomString(12));
+            $file->type = $data['Content-Type'] ?? self::$types[$urlInfo['extension']];
             $file->extension = substr(strstr($file->type, '/'), 1, strlen($file->type));
-            $file->type = $data['Content-Type'] ?? self::$types[$file->extension];
             $file->size = $data['Content-Length'] ?? 0;
+
+            $contextOptions = [
+                "ssl" => [
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
+                ],
+            ];
+            $fileSrc = file_get_contents(trim($url), false, stream_context_create($contextOptions));
+            $file->tempName = sys_get_temp_dir() . "/{$file->baseName}";
+            file_put_contents($file->tempName, $fileSrc);
         }
-        $file->tempName = $url;
 
         $this->_setPath($attribute);
         return $this->_saveFile($file, $tagAttributes, $attribute);
@@ -320,11 +330,14 @@ class FileAttachBehavior extends \yii\base\Behavior
             if (preg_match("/^image\/((?!svg|gif)).+$/i", $file->type) && $this->_checkSupportedImages($file)) {
                 try {
                     $imgSaveRes = $this->manager->make($file->tempName)->orientate()->save($this->filePath);
+                    unlink($file->tempName);
                 } catch (\Exception $e) {
                     error_log($e->getMessage());
+                    unlink($file->tempName);
                     return false;
                 }
                 if (!$imgSaveRes) {
+                    unlink($file->tempName);
                     return false;
                 }
 
