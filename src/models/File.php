@@ -89,6 +89,7 @@ class File extends ActiveRecord
         return array_merge(parent::attributes(), [
             'url',
             'trueUrl',
+            'filePath',
             'sizes'
         ]);
     }
@@ -212,16 +213,19 @@ class File extends ActiveRecord
      */
     public function afterFind()
     {
-        $this->url = Yii::getAlias($this->webPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/{$this->filename}");
-        $this->trueUrl = Url::to([$this->url], true);
-        $this->trueUrl = rtrim($this->trueUrl, '/');
+        $this->filePath = Yii::getAlias($this->webrootPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/{$this->filename}");
+        if (!(Yii::$app instanceof \yii\console\Application)) {
+            $this->url = Yii::getAlias($this->webPath . self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/{$this->filename}");
+            $this->trueUrl = Url::to([$this->url], true);
+            $this->trueUrl = rtrim($this->trueUrl, '/');
 
-        preg_match('/\/\w{2}\//ui', $this->trueUrl, $match);
-        $match = trim(array_pop($match), '/');
+            preg_match('/\/\w{2}\//ui', $this->trueUrl, $match);
+            $match = trim(array_pop($match), '/');
 
-        if ($langModule = Yii::$app->getModule('languages')) {
-            if (array_search($match, $langModule->languages) !== false) {
-                $this->trueUrl = preg_replace('/\/\w{2}\//ui', '/', $this->trueUrl);
+            if ($langModule = Yii::$app->getModule('languages')) {
+                if (array_search($match, $langModule->languages) !== false) {
+                    $this->trueUrl = preg_replace('/\/\w{2}\//ui', '/', $this->trueUrl);
+                }
             }
         }
 
@@ -250,17 +254,22 @@ class File extends ActiveRecord
     {
         $result = array();
         $basePath = self::getModelName($this->model_name) . "/{$this->model_id}/{$this->tag}/";
-        $path = Yii::getAlias($this->webPath . $basePath);
-        $truePath = Url::to([Yii::getAlias($path)], true);
+        $path = '';
+        $truePath = '';
         $exFilename = explode('.', $this->filename);
         $module = Yii::$app->getModule('files');
 
-        preg_match('/\/\w{2}\//u', $truePath, $match);
-        $match = trim(array_pop($match), '/');
+        if (!(Yii::$app instanceof \yii\console\Application)) {
+            $path = Yii::getAlias($this->webPath . $basePath);
+            $truePath = Url::to([Yii::getAlias($path)], true);
 
-        if ($langModule = Yii::$app->getModule('languages')) { // remove lang from truePath
-            if (array_search($match, $langModule->languages) !== false) {
-                $truePath = preg_replace('/\/\w{1,2}\//u', '/', $truePath);
+            preg_match('/\/\w{2}\//u', $truePath, $match);
+            $match = trim(array_pop($match), '/');
+
+            if ($langModule = Yii::$app->getModule('languages')) { // remove lang from truePath
+                if (array_search($match, $langModule->languages) !== false) {
+                    $truePath = preg_replace('/\/\w{1,2}\//u', '/', $truePath);
+                }
             }
         }
 

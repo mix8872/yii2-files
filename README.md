@@ -41,16 +41,6 @@ Common:
 'modules' => [
     'files' => [
         'class' => 'mix8872\yiiFiles\Module',
-        'as access' => [
-            'class' => 'yii\filters\AccessControl',
-            'rules' => [
-                [
-                    'controllers' => ['files/default'],
-                    'allow' => true,
-                    'roles' => ['admin']
-                ],
-            ]
-        ],
         'parameters' => [ // general module parameters
             'sizes' => [ // if imgProcessDriver is GD supports only jpeg, png and gif
                 'galleryMiddle' => ['width' => '880', 'height' => '587', 'model' => ['common\modules\imageslider\models\ImageSlider']],
@@ -97,6 +87,28 @@ Frontend:
 ```
 ## Important!!!
 #### Don't forget deny access to module from frontend app!!!
+
+
+Backend: 
+
+```
+'modules' => [
+        ...
+        
+        'files' => [
+            'as access' => [
+				'class' => 'yii\filters\AccessControl',
+				'rules' => [
+					[
+						'controllers' => ['files/default'],
+						'allow' => true,
+						'roles' => ['admin']
+					],
+				]
+			],
+        ],
+    ],
+```
 
 
 In config you may define access control to prevent access to the administrative part of the module.
@@ -284,3 +296,10 @@ public function onFileAdd()
         error_log('File delete');
     }
 ```
+
+Console 
+------------
+
+Coming soon
+
+

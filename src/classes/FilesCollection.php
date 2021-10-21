@@ -4,7 +4,7 @@ namespace mix8872\yiiFiles\classes;
 
 use yii\helpers\ArrayHelper;
 
-class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable
+class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Countable
 {
     public $items;
     private $position = 0;
@@ -121,5 +121,13 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable
     public function jsonSerialize()
     {
         return json_encode($this->items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->items);
     }
 }

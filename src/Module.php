@@ -10,7 +10,7 @@ use yii\base\InvalidConfigException;
 /**
  * File module.
  */
-class Module extends \yii\base\Module
+class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 {
     public $parameters;
     public $attributes;
@@ -110,6 +110,13 @@ class Module extends \yii\base\Module
             return self::NAME_BY_TRANSLIT;
         } else {
             return self::NAME_BY_RAND;
+        }
+    }
+
+    public function bootstrap($app)
+    {
+        if ($app instanceof \yii\console\Application) {
+            $this->controllerNamespace = 'mix8872\yiiFiles\commands';
         }
     }
 

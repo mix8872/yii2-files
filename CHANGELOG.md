@@ -1,5 +1,9 @@
 # Changelog
 
+##1.3.1
+
+Add console files sizes rebuilder
+
 ##1.2.8
 
 Fix attachByUrl bug
