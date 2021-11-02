@@ -1,4 +1,7 @@
 # Changelog
+##1.3.2
+
+Some filesWidget update
 
 ##1.3.1
 

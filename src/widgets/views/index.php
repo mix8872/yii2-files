@@ -24,9 +24,9 @@ use mix8872\yiiFiles\widgets\FilesWidget;
         'label', 'model', 'attribute', 'multiple', 'inputFileTypes',
         'jsAllowedFileTypes', 'jsAllowedFileExtensions', 'maxCount', 'theme', 'field')) ?>
 <?php endif; ?>
-<?php if (!$multiple):
-    $file = $query->one();
-    if ($file): ?>
+<?php if (!$multiple): ?>
+    <?php $file = $query->one(); ?>
+    <?php if ($file): ?>
         <table class="file-table">
             <tr>
                 <?php $type = explode('/', $file->mime_type); ?>
@@ -50,7 +50,11 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                             <?= Html::tag('i', '', ['class' => 'fa far fa-file', 'style' => 'font-size: 100px;']) ?>
                         </td>
                         <td>
-                            <?= Html::tag('span', $file->name . '.' . $type[1]) ?>
+                            <?= Html::a(
+                                Html::tag('span', $file->name . '.' . $type[1]),
+                                $file->url,
+                                ['target' => '_blank']
+                            ); ?>
                         </td>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -93,16 +97,16 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                 'value' => function ($model) {
                     if (preg_match("/^image\/.+$/i", $model->mime_type)) {
                         return Html::a(
-                                Html::img($model->url, ['width' => '50px']),
-                                $model->url,
-                                ['class' => 'lightbox']
-                            );
+                            Html::img($model->url, ['width' => '50px']),
+                            $model->url,
+                            ['class' => 'lightbox']
+                        );
                     } elseif (preg_match("/^video\/.+$/i", $model->mime_type)) {
                         return Html::tag(
-                                'video',
-                                Html::tag('source', '', ['src' => $model->url, 'type' => $model->mime_type]),
-                                ['width' => '50px', 'controls' => true]
-                            );
+                            'video',
+                            Html::tag('source', '', ['src' => $model->url, 'type' => $model->mime_type]),
+                            ['width' => '50px', 'controls' => true]
+                        );
                     } else {
                         return Html::a(Yii::t('files', 'Preview'), [$model->url], ['tagret' => '_blank']);
                     }
