@@ -1,4 +1,8 @@
 # Changelog
+##1.3.3
+
+Fix bug in the File model with wrong file extension
+
 ##1.3.2
 
 Some filesWidget update

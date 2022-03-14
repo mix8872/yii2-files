@@ -257,6 +257,7 @@ class File extends ActiveRecord
         $path = '';
         $truePath = '';
         $exFilename = explode('.', $this->filename);
+        $extension = $exFilename[count($exFilename) - 1];
         $module = Yii::$app->getModule('files');
 
         if (!(Yii::$app instanceof \yii\console\Application)) {
@@ -288,18 +289,18 @@ class File extends ActiveRecord
 
                     switch ($sizesNameBy) {
                         case 'key':
-                            $fileName = $exFilename[0] . '-' . $key . '.' . $exFilename[1];
+                            $fileName = $exFilename[0] . '-' . $key . '.' . $extension;
                             break;
                         case 'template':
                             $template = $module->parameters['sizesNameTemplate'];
                             $nameSize = $width . 'x' . $height;
                             $template = preg_replace('/%s/u', $nameSize, $template);
                             $template = preg_replace('/%k/u', $key, $template);
-                            $fileName = $exFilename[0] . '-' . $template . '.' . $exFilename[1];
+                            $fileName = $exFilename[0] . '-' . $template . '.' . $extension;
                             break;
                         case 'size':
                         default:
-                            $fileName = $exFilename[0] . '-' . $width . 'x' . $height . '.' . $exFilename[1];
+                            $fileName = $exFilename[0] . '-' . $width . 'x' . $height . '.' . $extension;
                     }
 
                     if ($width || $height) {
