@@ -45,7 +45,7 @@ class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
                 if (substr($this->parameters['savePath'], -1) != '/') {
                     $this->parameters['savePath'] = $this->parameters['savePath'] . '/';
                 }
-                if ($this->parameters['savePath']{0} != '/') {
+                if ($this->parameters['savePath'][0] != '/') {
                     $this->parameters['savePath'] = '/' . $this->parameters['savePath'];
                 }
             } else {

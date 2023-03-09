@@ -19,12 +19,13 @@ class FileinputAsset extends \yii\web\AssetBundle
         'js/plugins/sortable.min.js',
         'js/fileinput.min.js',
         'js/locales/ru.js',
-        'themes/explorer-fa/theme.js',
-        'themes/fa/theme.js',
+        'themes/explorer-fa5/theme.js',
+        'themes/fa5/theme.js',
 //        'bs-fileinput/js/plugins/popper.min.js',
     ];
 
     public $depends = [
 		'mix8872\yiiFiles\assets\FilesAsset',
+        'yii\bootstrap5\BootstrapIconAsset',
     ];
 }

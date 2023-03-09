@@ -220,7 +220,7 @@ class File extends ActiveRecord
             $this->trueUrl = rtrim($this->trueUrl, '/');
 
             preg_match('/\/\w{2}\//ui', $this->trueUrl, $match);
-            $match = trim(array_pop($match), '/');
+            $match = trim((string)array_pop($match), '/');
 
             if ($langModule = Yii::$app->getModule('languages')) {
                 if (array_search($match, $langModule->languages) !== false) {
@@ -265,7 +265,7 @@ class File extends ActiveRecord
             $truePath = Url::to([Yii::getAlias($path)], true);
 
             preg_match('/\/\w{2}\//u', $truePath, $match);
-            $match = trim(array_pop($match), '/');
+            $match = trim((string)array_pop($match), '/');
 
             if ($langModule = Yii::$app->getModule('languages')) { // remove lang from truePath
                 if (array_search($match, $langModule->languages) !== false) {

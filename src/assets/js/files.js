@@ -66,20 +66,21 @@
             dataType: 'json',
             success: function (response) {
                 if (response) {
-                    jQuery.Notification.notify(
-                        'success',
-                        'top center',
-                        '',
-                        'Свойства файла успешно сохранены'
-                    );
+                    $.toast({
+                        text: "Свойства файла успешно сохранены",
+                        position: "top-center",
+                        hideAfter: 2000,
+                        stack: 15
+                    });
                     $this.addClass('btn-success').html('Сохранено');
                 } else {
-                    jQuery.Notification.notify(
-                        'danger',
-                        'top center',
-                        '',
-                        'Ошибка сохранения'
-                    );
+                    $.toast({
+                        text: "Ошибка сохранения",
+                        position: "top-center",
+                        icon: "$type",
+                        hideAfter: 2000,
+                        stack: 15
+                    });
                     $this.addClass('btn-primary').html('Сохранить');
                 }
             }

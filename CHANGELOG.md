@@ -1,4 +1,10 @@
 # Changelog
+##1.3.4
+
+- Fix bug in the File model
+- Fix bug in js to save data file
+- Add bootstrap-icons
+
 ##1.3.3
 
 Fix bug in the File model with wrong file extension

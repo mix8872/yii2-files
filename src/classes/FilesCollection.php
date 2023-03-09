@@ -34,7 +34,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
             $this->items[] = $value;
@@ -46,7 +46,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->items[$offset]);
     }
@@ -54,7 +54,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->items[$offset]);
     }
@@ -62,7 +62,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->items[$offset] ?? null;
     }
@@ -74,7 +74,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
@@ -82,7 +82,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->items[$this->position];
     }
@@ -90,7 +90,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }
@@ -98,7 +98,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
@@ -106,7 +106,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->items[$this->position]);
     }
@@ -118,7 +118,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return json_encode($this->items);
     }
@@ -126,7 +126,7 @@ class FilesCollection implements \ArrayAccess, \Iterator, \JsonSerializable, \Co
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
