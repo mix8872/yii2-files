@@ -18,7 +18,8 @@
     "ext-intl": "*",
 	"npm-asset/bootstrap-fileinput": "~5.1",
 	"intervention/image": "*",
-	"himiklab/yii2-sortable-grid-view-widget" : "*"
+	"himiklab/yii2-sortable-grid-view-widget" : "*",
+    "twbs/bootstrap-icons": "^1.10"
   },
   "autoload": {
     "psr-4": {
