@@ -69,6 +69,7 @@
                     $.toast({
                         text: "Свойства файла успешно сохранены",
                         position: "top-center",
+                        icon: "success",
                         hideAfter: 2000,
                         stack: 15
                     });
@@ -77,7 +78,7 @@
                     $.toast({
                         text: "Ошибка сохранения",
                         position: "top-center",
-                        icon: "$type",
+                        icon: "error",
                         hideAfter: 2000,
                         stack: 15
                     });
