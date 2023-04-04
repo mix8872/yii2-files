@@ -1,4 +1,9 @@
 # Changelog
+
+##1.3.5
+
+- Fix url files with multiple
+
 ##1.3.4
 
 - Fix bug in the File model

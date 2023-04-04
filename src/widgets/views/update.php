@@ -122,7 +122,7 @@ $this->registerJs($js);
                                             ['width' => '40px', 'controls' => true]
                                         );
                                     } else {
-                                        return Html::a(Yii::t('files', 'Preview'), [$setsModel->url], ['tagret' => '_blank']);
+                                        return Html::a(Yii::t('files', 'Preview'), $setsModel->url, ['tagret' => '_blank']);
                                     }
                                 }
                             ],

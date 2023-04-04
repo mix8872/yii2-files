@@ -108,7 +108,7 @@ use mix8872\yiiFiles\widgets\FilesWidget;
                             ['width' => '50px', 'controls' => true]
                         );
                     } else {
-                        return Html::a(Yii::t('files', 'Preview'), [$model->url], ['tagret' => '_blank']);
+                        return Html::a(Yii::t('files', 'Preview'), $model->url, ['tagret' => '_blank']);
                     }
                 }
             ],
