@@ -1,5 +1,9 @@
 # Changelog
 
+##2.0.0
+
+- bootstrap5 integration
+
 ##1.3.5
 
 - Fix url files with multiple

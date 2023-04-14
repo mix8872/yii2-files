@@ -39,8 +39,8 @@
             success: function (r) {
                 modal.append(r);
                 $(document.body).append(modal);
-                modal.modal();
-                modal.on('hide.bs.modal', function () {
+                new bootstrap.Modal($('#file-edit-modal')).show();
+                document.getElementById('file-edit-modal').addEventListener('hide.bs.modal', function () {
                     $(this).remove();
                 });
             }

@@ -31,7 +31,7 @@ $this->registerJs($js);
     <div class="modal-content">
         <div class="modal-header">
             <h4 class="modal-title">Свойства файла <?= mb_strimwidth($model->name, 0, 30, ' ...') ?></h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <ul class="nav nav-tabs navtab-bg nav-justified">
